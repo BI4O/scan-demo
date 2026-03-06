@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>商家注册付款 - RWA.LTD</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Header - 基于官网精确布局 */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      height: 94px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      padding: 0 13.5%;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .header-inner {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo {
+      height: 38px;
+      width: 141px;
+      flex-shrink: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      margin-left: 0;
+    }
+
+    .nav-links a {
+      font-size: 15.7px;
+      font-weight: 400;
+      color: #333333;
+      margin-left: 31px;
+      transition: color 0.3s;
+      white-space: nowrap;
+    }
+
+    .nav-links a:first-child {
+      margin-left: 31px;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #4063ff;
+      font-weight: 800;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px;
+    }
+
+    /* Step 1: Contract */
+    .step-1 {
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .contract-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333333;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .contract-box {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 24px 32px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .contract-content {
+      height: 400px;
+      overflow-y: auto;
+      padding: 20px 25px;
+      background: #fafafa;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #333333;
+      overscroll-behavior: contain;
+    }
+
+    .contract-content p {
+      margin-bottom: 8px;
+    }
+
+    .contract-content ul {
+      margin-left: 20px;
+      margin-bottom: 10px;
+    }
+
+    .contract-content li {
+      margin-bottom: 4px;
+    }
+
+    .contract-content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .contract-content::-webkit-scrollbar-track {
+      background: #f0f0f0;
+      border-radius: 4px;
+    }
+
+    .contract-content::-webkit-scrollbar-thumb {
+      background: #c0c0c0;
+      border-radius: 4px;
+    }
+
+    .contract-content::-webkit-scrollbar-thumb:hover {
+      background: #a0a0a0;
+    }
+
+    .scroll-hint {
+      text-align: center;
+      color: #999999;
+      font-size: 12px;
+      margin-top: 12px;
+      transition: opacity 0.3s;
+    }
+
+    .scroll-hint.hidden {
+      opacity: 0;
+    }
+
+    .agreement-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+      gap: 8px;
+    }
+
+    .agreement-box input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      cursor: not-allowed;
+      accent-color: #4063ff;
+      opacity: 0.5;
+    }
+
+    .agreement-box input[type="checkbox"].enabled {
+      cursor: pointer;
+      opacity: 1;
+    }
+
+    .agreement-box label {
+      font-size: 13px;
+      color: #666666;
+      cursor: default;
+    }
+
+    .agreement-box label.enabled {
+      cursor: pointer;
+      color: #333333;
+    }
+
+    .submit-btn {
+      display: block;
+      width: 100%;
+      max-width: 200px;
+      margin: 20px auto 0;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #ffffff;
+      background: #4063ff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      background: #3050dd;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(64, 99, 255, 0.4);
+    }
+
+    .submit-btn:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Step 2: QR Code */
+    .step-2 {
+      width: 100%;
+      max-width: 500px;
+      display: none;
+    }
+
+    .qr-box {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .qr-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #333333;
+      margin-bottom: 30px;
+    }
+
+    .qr-image {
+      width: 200px;
+      height: 200px;
+      margin: 0 auto 20px;
+      background: #f0f0f0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .qr-image img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    .amount-display {
+      font-size: 32px;
+      font-weight: 700;
+      color: #4063ff;
+      margin: 20px 0;
+    }
+
+    .payment-hint {
+      font-size: 16px;
+      color: #666666;
+      margin-top: 10px;
+    }
+
+    /* Footer - 基于官网精确布局 */
+    .footer {
+      width: 100%;
+      height: auto;
+      min-height: 385px;
+      background: #3f3f3f;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: center;
+      padding: 0 13.5%;
+    }
+
+    .footer-left {
+      margin-top: 94px;
+      margin-right: auto;
+    }
+
+    .footer-logo {
+      width: 122px;
+      height: 33px;
+      margin-bottom: 60px;
+    }
+
+    .footer-social {
+      display: flex;
+    }
+
+    .footer-social img {
+      width: 35px;
+      height: 35px;
+      margin-right: 31px;
+    }
+
+    .footer-social img:last-child {
+      margin-right: 0;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: space-evenly;
+      flex: 1;
+      margin-top: 94px;
+    }
+
+    .footer-column h4 {
+      font-size: 15.7px;
+      font-weight: 400;
+      color: #ffffff;
+      margin-bottom: 35px;
+    }
+
+    .footer-column p {
+      font-size: 12.6px;
+      color: #999999;
+      margin-bottom: 16px;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .footer-column p:hover {
+      color: #ffffff;
+    }
+
+    .footer-copyright {
+      text-align: center;
+      font-size: 12.6px;
+      color: #ffffff;
+      margin-top: 47px;
+      padding-bottom: 30px;
+    }
+
+    /* Responsive */
+    @media (max-width: 1400px) {
+      .header, .footer-inner {
+        padding: 0 40px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        height: 70px;
+        padding: 0 20px;
+      }
+
+      .logo {
+        height: 30px;
+        width: 110px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .step-1 {
+        max-width: 100%;
+      }
+
+      .contract-box {
+        padding: 20px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 40px 20px;
+      }
+
+      .footer-left {
+        margin-top: 0;
+        margin-right: 0;
+        margin-bottom: 40px;
+      }
+
+      .footer-logo {
+        margin-bottom: 30px;
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: 40px;
+        margin-top: 0;
+      }
+
+      .footer-social {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="/">
+          <img src="images/logo-black.png" alt="RWA.LTD" class="logo">
+        </a>
+        <nav class="nav-links">
+          <a href="/#/home">首頁</a>
+          <a href="/#/ctc">交易</a>
+          <a href="/#/question">常見問題</a>
+          <a href="/#/partnerProgram">合夥人計劃</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Step 1: Contract -->
+    <div class="step-1" id="step1">
+      <h2 class="contract-title">流量平台服务协议</h2>
+      <div class="contract-box">
+        <div class="contract-content" id="contractContent">
+          <p>本版本更新时间：2026年2月14日</p>
+          <br>
+          <p>欢迎您订购使用稳点商城流量平台服务！</p>
+          <br>
+          <p>本流量平台服务由 Hong Kong International New Economic Research Institute Limited 香港国际新经济研究院有限公司（商业登记号码：71161346；注册地址：香港新界沙田大道西12号香港科学园12W221室）（以下称"平台方"）向您提供。</p>
+          <br>
+          <p>本《流量平台服务协议》（以下称"本协议"）由平台方与您（即前述页面写明的"跨境电商运营公司"，以下亦称"商家"）订立，生效日期为您成功按照平台方指示将相应服务费用汇款至平台方指定账户之日。</p>
+          <br>
+          <p><strong>特别提示：请您务必仔细阅读本协议全部内容，尤其是以加粗形式展示的、与您权益存在重大关系的条款（包括但不限于：双方权利、义务和责任、适用法律及管辖等）。若您不同意本协议任何条款，请勿以确认形式（包括但不限于：勾选同意、支付/续费及实际使用服务等）进行下一步操作。您以确认形式进行下一步操作或使用服务的，即视为您已充分理解并自愿接受本协议全部内容。</strong></p>
+          <br>
+          <p>平台方有权根据任何其业务涉及的法律、监管政策或者内部业务调整的需要等对本协议进行调整，并将以书面方式（包括但不限于电子邮件、短信及即时通讯信息）通知您。若您不同意调整内容，可选择停止使用平台方的服务并在最新服务期结束后停止续费，已支付的服务费不予退回；若您继续续费或实际使用平台方提供的服务，视为您同意调整后的全部内容。</p>
+          <br>
+          <p><strong>鉴于：</strong></p>
+          <ul>
+            <li>平台方为稳点商城（以下亦称"平台"）的运营方，该平台系一家于香港运营、基于区块链技术运行的数字化平台，主要业务包括为商家提供流量管理及用户互动工具；</li>
+            <li>商家从事跨境电子商务或相关商业活动，存在对用户流量管理、用户互动及品牌曝光的实际商业需求；</li>
+            <li>双方现同意开展本协议项下之合作，由平台方为商家提供相关流量平台服务。</li>
+          </ul>
+          <br>
+          <p><strong>第一条 服务模式</strong></p>
+          <ul>
+            <li>本协议项下服务系基于稳点商城中的平台方自发行的积分（以下称"积分"），为商家提供的自营流量管理及跨商家流量共享的平台支持服务。</li>
+          </ul>
+          <br>
+          <p><strong>1.2 商家通过购买并发放积分，自主完成用户引流、用户留存及权益设置，平台方仅提供平台系统与展示触达机制，不参与商家与平台注册用户以及其自有用户（以下称"用户"）之间的具体交易、积分发放或履约行为。任何基于商家所设置的积分权益所产生的纠纷、损失或责任（包括但不限于：无法履约、延迟履约、权益描述不一致、质量争议、售后、退款、索赔、监管投诉等），均由商家自行承担；平台方不承担任何责任。</strong></p>
+          <br>
+          <p><strong>1.3 积分所代表的权益内容除商家权益外，可能随时变动调整并包含任何第三方商家所提供的权益内容。涉及第三方提供权益的，其规则、履约与责任由第三方承担或依相应规则处理，平台方不作保证。</strong></p>
+          <br>
+          <p><strong>第二条 服务流程</strong></p>
+          <br>
+          <p>2.1 阶段一：积分设置与交付</p>
+          <ul>
+            <li>商家按约定服务费标准（详情见下）向平台方定期购买积分，作为权益凭证。</li>
+            <li>平台方在服务期内：
+              <ul>
+                <li>将商家所设置的商品或服务权益纳入积分所代表的权益内容；以及</li>
+                <li>为商家设置平台账户，用于管理积分。商家应妥善保管账户、密码、验证码等信息并对账户行为负责，因商家保管、使用、维护账户不当而造成的损失，商家应自行承担。</li>
+              </ul>
+            </li>
+            <li>商家所设置的商品或服务权益（如折扣、代金券、盲盒和直接商品兑换等）由商家自行设置并负责履行。</li>
+          </ul>
+          <br>
+          <p>2.2 阶段二：积分发放支持</p>
+          <ul>
+            <li>商家自行决定积分的发放对象、方式及规则。</li>
+            <li>平台方仅提供积分的领取入口及平台系统承载，不参与具体发放行为。</li>
+          </ul>
+          <br>
+          <p>2.3 阶段三：积分使用及平台功能支持</p>
+          <ul>
+            <li>积分持有人能在稳点商城内查看积分对应的可兑换权益，并可以按照最新的积分权益单、平台公告以及平台使用协议要求兑换权益。积分持有人兑换权益后，相应消耗的积分将发回商家在平台的注册账户。</li>
+            <li>积分持有人作为平台用户能使用平台提供的功能支持。</li>
+          </ul>
+          <br>
+          <p>2.4 阶段四：流量管理与平台曝光服务</p>
+          <ul>
+            <li>自营流量管理：积分持有人在持有期间，可持续接收商家通过"平台曝光支持"（详情见下）发布的内容；平台方提供信息触达与展示机制，不保证用户阅读、点击或转化。</li>
+            <li>百家流量共享机制：积分持有人可在平台内接触第三方商家发布的信息、要求兑换其他商家的商品或服务权益，从而形成跨商家流量流转。该机制基于用户自主行为，不构成平台对商家导流数量的承诺。</li>
+            <li>平台曝光支持：
+              <ul>
+                <li>全站曝光：在服务期内，每月向商家提供<strong>两（2）次</strong>平台首页曝光投放（具体曝光形式、位置及展示规则由平台依照合理商业判断决定，但是平台应当参考商家的提议），投放内容由商家自定。前述次数不可结转，当月的次数若未使用则作废；</li>
+                <li>深度曝光：本协议项下仅能<strong>免费试用一（1）次</strong>，由商家额外提供权益，平台顾客与商家自定内容进行深度互动（包括但不限于阅读最短时间、问卷调查等）后即可解锁商家额外提供的权益，具体深度互动形式、规则由平台依照合理商业判断决定，但是平台应当参考商家的提议。</li>
+              </ul>
+            </li>
+          </ul>
+          <br>
+          <p><strong>第三条 费用结构和支付安排</strong></p>
+          <br>
+          <p>3.1 商家同意按以下方式向平台方支付服务费用：</p>
+          <ul>
+            <li>每月支付人民币或港币 1,000 元，平台方每月发放725个积分；</li>
+            <li>首次合作商家可享<strong>一（1）个月试用期</strong>，即仅支付人民币或港币 1,000 元；</li>
+            <li>试用期届满后，商家可以选择续约。</li>
+          </ul>
+          <br>
+          <p>3.2 若商家选择续约，则每次续约期限应<strong>为 六（6） 个月或其倍数</strong>，每六（6）个月服务费合计为人民币或港币 6,000 元。前述续约安排的有效期为自<strong>生效日期后两（2）年</strong>，在有效期内，商家可以自由续约；无平台方另行的书面许可，商家续约的期限不可超过有效期。续约安排由双方另以书面补充协议约定，补充协议为本协议的补充内容，若有矛盾之处，以补充协议优先。您知悉并同意，平台方有权根据其合理商业判断在与任何第三方商家签订的补充协议中约定与本协议项下不同的服务单价和服务内容。</p>
+          <br>
+          <p><strong>3.3 请您知悉，平台方根据其运营成本、运营策略等综合考虑，有权随时调整本协议项下的收费标准、收费方式、付费内容和额外付费项目等。若您在购买和续费时，收费方式已发生变化，请以平台方实际支持的收费方式为准；相关服务价格已调整，应以平台公示的现时有效的价格为准。</strong></p>
+          <br>
+          <p>3.4 保证金安排</p>
+          <ul>
+            <li>商家同意在向平台方缴纳人民币或港币 500 元作为保证金（以下称"保证金"），用于在商家与用户之间发生争议、投诉或其他纠纷时，平台方对相关事项进行初步协调、调查、处理或垫付必要合理费用。</li>
+            <li>平台方有权在争议处理完成前暂时冻结、扣划或使用全部或部分保证金，用于前述目的；如保证金不足以覆盖相关费用或赔偿，商家应就不足部分承担补足责任。</li>
+            <li>在商家不存在未了结争议、投诉、违反本协议约定或其他应由商家承担责任的情形下，商家不再续约，平台方将在接收到商家书面通知后的三十（30）个工作日内将剩余保证金（如有）无息退还商家。</li>
+            <li><strong>商家确认并同意，在完成首月服务期后，平台方有权基于合理商业考虑、交易规模化、投诉率等风险评估指标或其他与平台运营安全及稳定相关之因素，随时书面通知商家要求增加保证金金额。如商家未于指定期限内补足保证金，则平台方有权立即暂停向商家提供本协议项下全部或部分服务直至保证金补足，无需退还任何服务费并有权扣押商家已经交纳的保证金；若商家逾期十五（15）个日历日仍未补足，平台方有权终止向商家提供本协议项下全部或部分服务，无需退还任何服务费并有权没收商家已经交纳的保证金。同时，平台方有权下架权益、公告风险提示等，以维护平台安全和用户权益。</strong></li>
+            <li>本保证金安排不构成平台方对商家履约、设置权益质量的任何担保或承诺，亦不影响平台方依据本协议或适用法律追究商家其他责任的权利。</li>
+          </ul>
+          <br>
+          <p>3.5 商家应于生效日期后两（2）个日历日内将首月服务费和保证金全额（共计人民币或港币 1,500 元）一次性支付至平台方指定的银行账户（包括但不限于通过勾选本协议后跳转的二维码支付）。</p>
+          <br>
+          <p>3.6 本协议项下服务为数字化平台及权益凭证相关服务。除法律强制规定或本协议另有明确约定外，商家已支付的服务费不予退还；平台方已履行对应服务的费用不予退还。</p>
+          <br>
+          <p><strong>3.7 初步审核及费用处理</strong></p>
+          <ul>
+            <li><strong>商家在支付本协议项下相关费用后应积极配合平台方进行初步审核（"初审"），并按平台方要求提供真实、准确和完整的相关资料。因商家延迟提供资料、资料不完整或需要补充说明的，前述初审期限相应顺延。</strong></li>
+            <li><strong>初审内容包括但不限于：</strong>
+              <ul>
+                <li><strong>（1）商家公司主体的真实性、合法存续状态；</strong></li>
+                <li><strong>（2）商家是否依法具备其所售商品或所提供服务的相关经营资质、许可或备案；和</strong></li>
+                <li><strong>（3）平台基于合理商业判断认为必要的其他合规性审查事项。</strong></li>
+              </ul>
+            </li>
+            <li><strong>初审通过后，平台方将启动并开展本协议项下的具体服务。商家确认，在初审通过前，平台方无义务提供任何实质性服务或承担相关履约责任。</strong></li>
+            <li><strong>若您未通过初审，平台方将以书面形式通知商家审核结果，并自发出书面通知之日起十五（15）个工作日内无息退还商家已支付的相关费用。平台方除前述退款义务外，不承担任何进一步责任。</strong></li>
+          </ul>
+          <br>
+          <p><strong>第四条 合规说明</strong></p>
+          <br>
+          <p>4.1 根据第615章 《打击洗钱及恐怖分子资金筹集条例》第 53ZRA 条、第53ZRA(2)(a)(ii) 条以及附表3B，本平台项下的积分不属于"VA"/"virtual asset"/"虚拟资产"，平台方提供的服务不属于"VA Service" / "虚拟资产服务"，因此平台方不需要申请虚拟资产交易平台（Virtual Asset Trading Platform/VATP）牌照。平台方仅为积分所载的商品或服务权益提供平台。</p>
+          <br>
+          <p>4.2 积分唯一及全部功能为：</p>
+          <ul>
+            <li>作为商家向平台用户提供之商品或服务权益的数字化凭证；</li>
+            <li>用于记录、兑换或转让前述商品或服务权益；以及</li>
+            <li>用于平台内部与该等商品或服务权益直接相关的技术或运营功能。</li>
+          </ul>
+          <br>
+          <p><strong>4.3 积分以及稳点商城提供的服务：</strong></p>
+          <ul>
+            <li><strong>不构成、亦不拟构成《证券及期货条例》（香港法例第571章）项下的证券、期货、衍生工具、集体投资计划或结构性产品；</strong></li>
+            <li><strong>不构成稳定币、支付工具、电子货币或多用途储值支付工具；</strong></li>
+            <li><strong>不包含任何收益或回购承诺。</strong></li>
+          </ul>
+          <br>
+          <p><strong>第五条 双方权利和义务</strong></p>
+          <br>
+          <p>5.1 平台方应依照行业惯例及适用法律，以合理的技能、谨慎和勤勉履行本协议项下的服务。</p>
+          <br>
+          <p>5.2 平台方有权将部分服务委托其关联方或专业第三方执行，但应对最终交付成果负责。</p>
+          <br>
+          <p>5.3 平台方不对以下原因造成的未能或延迟交付承担责任：(i) 商家未按照平台方的合理请求提供信息或配合；(ii) 法律、法律执行或一般政策的现有或即将发生的变化或合理信赖的趋势。</p>
+          <br>
+          <p>5.4 商家有权要求平台方就服务过程提供进展或解释，并就交付成果提出意见或建议，平台方应当予以合理考虑；但商家不得以其意见或建议未被采纳为由拒绝配合或拒付费用。</p>
+          <br>
+          <p>5.5 商家应根据本协议按时足额支付服务费。若商家延迟付款，平台方有权暂停全部或部分服务，且对因此产生的损失不承担任何责任，且没有义务归还商家已经支付过的款项。</p>
+          <br>
+          <p>5.6 平台方有权在任何时候要求商家提供关于商家资质、所设置权益（包括商品、服务或类似权益）的规格品质和库存现状等信息以证明商家具有合法、及时地向平台方用户履约的能力，商家应及时按照要求行事，确保所有信息真实、准确、完整、合法且不侵犯任何第三方权利。</p>
+          <br>
+          <p><strong>5.7 商家不得：</strong></p>
+          <ul>
+            <li><strong>未经平台方书面许可将本协议项下的任何权利义务转让给任何第三方；</strong></li>
+            <li><strong>提供虚假资质、虚假权益、误导性宣传或侵权内容；</strong></li>
+            <li><strong>以任何方式误导第三方对积分产生投资收益期待（含保本、回购、收益承诺等）；</strong></li>
+            <li><strong>利用积分进行洗钱等违反其行为发生地生效法律（以下称"行为地法律"）的行为；或</strong></li>
+            <li><strong>以违反行为地法律的形式开展营销、发放积分或履行权益。</strong></li>
+          </ul>
+          <br>
+          <p>5.8 在平台方上的任何用户请求兑换以获得商家承诺设置的商品或服务权益时，商家应按照其承诺设置的方式向这些用户配送商品、提供服务或履行任何其他非金融投资性承诺权益，并对任何未履行、延迟或不合格履行承担全部责任。</p>
+          <br>
+          <p><strong>第六条 陈述与保证</strong></p>
+          <br>
+          <p>6.1 双方各自陈述并保证，对于本协议的签署和履行、在本协议项下开展的任何活动，其拥有法律要求的一切权益、必要的批准、许可和授权，本协议的签署和履行以及相关活动的开展不会违反任何适用的法律或对其具有约束力的任何协议。</p>
+          <br>
+          <p>6.2 双方各自陈述与保证，在本协议项下开展的所有业务活动（包括但不限于平台服务、商品或服务权益的设计、宣传、提供及履行），均符合其行为地法律。</p>
+          <br>
+          <p>6.3 双方各自陈述与保证，在本协议项下提供的以任何形式体现的信息均真实、准确和完整，不存在虚假陈述、重大遗漏或误导性信息。</p>
+          <br>
+          <p>6.4 商家陈述与保证，通过本协议提供或承诺的所有商品或服务权益均真实存在、合法有效，且商家具备持续、完整履行相关权益的能力，不存在虚假、误导或无法兑现的情况。</p>
+          <br>
+          <p>6.5 若上述任何陈述与保证被证明不真实、不准确或不完整，提供陈述与保证的一方须立即通知另一方，并尽合理努力复原被陈述与保证的内容。本条款不影响被提供陈述与保证的一方追究相关违约责任。</p>
+          <br>
+          <p><strong>第七条 平台免责声明</strong></p>
+          <br>
+          <p>7.1 平台方根据本协议向商家提供的服务，仅系基于现有技术条件和平台使用协议的信息技术支持和内部协调规则。</p>
+          <br>
+          <p>7.2 商家确认并同意，平台曝光、用户互动及权益领取的实际效果，受多种不可控因素影响，平台方不保证任何特定的推广效果、用户行为或商业转化结果。</p>
+          <br>
+          <p>7.3 除本协议明确规定外，平台方不作任何其他明示或暗示的保证，包括但不限于（i）适销性或特定用途的适用性以及（ii）本协议项下的服务和交付成果可能对商家带来的任何影响。</p>
+          <br>
+          <p>7.4 平台方不参与商家与平台用户之间因积分产生的任何法律关系，亦不对商家提供的商品、服务或设置权益作出任何形式的陈述或保证。</p>
+          <br>
+          <p>7.5 平台用户在平台内的任何行为（包括但不限于领取、消耗、转让权益或对商家商品、服务的评价），均由用户自行决定，平台方不对用户行为或其后果承担任何责任。</p>
+          <br>
+          <p>7.6 在适用法律允许的最大范围内，平台方不对因以下原因导致的服务中断、延迟、错误或数据异常承担责任：</p>
+          <ul>
+            <li>系统维护、升级或优化；</li>
+            <li>网络、设备或第三方服务故障；以及</li>
+            <li>不可抗力或非平台方可合理控制的技术原因。</li>
+          </ul>
+          <p>商家确认并同意，平台方有权基于合理商业判断、合规要求、技术安全、系统稳定性或内部运营管理需要，不定期对平台系统进行检查、维护、升级、更新或功能调整。前述行为可能导致平台全部或部分功能暂时中断、延迟、性能下降或服务受限。商家理解并接受该等情况属于正常运营安排，平台方无需就因此产生的任何直接或间接损失承担违约责任或赔偿责任，但平台方将尽合理努力缩短影响时间并恢复服务。</p>
+          <br>
+          <p>7.7 商家确认，其在平台内开展的业务活动及权益安排的合规性由商家自行负责。因法律、监管政策变化或监管机构要求而导致的平台规则调整、服务变更或中止，平台方不因此承担违约或赔偿责任。</p>
+          <br>
+          <p>7.8 商家基于平台数据、用户反馈或其他信息作出的任何商业决策，均属商家自主判断行为，平台方不对该等决策的结果承担责任。</p>
+          <br>
+          <p>7.9 在任何情况下，平台方因本协议项下服务所承担的责任（如有），均以商家在最近一次缴费时向平台方支付的服务费为上限；平台方不承担任何间接损失、预期利益损失或惩罚性赔偿责任。</p>
+          <br>
+          <p><strong>第八条 保密和知识产权</strong></p>
+          <br>
+          <p>8.1 一方对因本协议或履行本协议而知悉的另一方的一切未公开信息（不包括双方明确沟通的对外宣传内容）负有保密义务，未经一方事先书面同意，不得向任何第三方披露、泄露或自行使用。</p>
+          <br>
+          <p>8.2 平台方对在服务过程中形成的所有文稿、模板、技术、方法及材料享有完整和独占的知识产权。商家仅能就本协议项下与平台方的合作事宜非独占地使用前述知识产权，未经平台方书面许可不得复制、转让或超出前述范围使用。</p>
+          <br>
+          <p>8.3 本第八条全部内容不因本协议的终止、解除或失效而失效，永久有效。</p>
+          <br>
+          <p><strong>第九条 违约责任</strong></p>
+          <br>
+          <p><strong>9.1 任何一方未履行或未完全履行本协议项下的任何义务，均构成违约；违约方应赔偿守约方因此遭受的全部损失，包括为实现权利而产生的合理费用（例如律师费、诉讼费等）。守约方有权依法采取解除协议、暂停履行或其他法律救济措施。</strong></p>
+          <br>
+          <p><strong>9.2 若平台方无正当理由严重延误所承诺的服务，商家有权要求其在合理期限内调整改正；若平台方逾期仍未调整改正，商家有权解除协议，并要求退还未履行部分对应的服务费用。</strong></p>
+          <br>
+          <p><strong>9.3 若商家未能按时支付服务费，平台方有权暂停所有服务直至应付款项全额到账，且商家应按总服务费用每日千分之五支付违约金。若逾期超过十（10）个工作日，平台方有权在任意时候单方解除本协议，并从保证金中扣减违约金后，将剩余款项（若有）退还给商家。</strong></p>
+          <br>
+          <p><strong>9.4 若商家未按照本协议第五条中 5.6的规定在平台方通知期限内提交真实完整的资料，履行设置权益时，平台方有权立即暂停向商家提供本协议项下全部或部分服务直至资料补足，无需退还任何服务费并有权扣押商家已经交纳的保证金；若商家逾期十五（15）个日历日仍未补足，平台方有权终止向商家提供本协议项下全部或部分服务，无需退还任何服务费并有权没收商家已经交纳的保证金。同时，平台方有权下架权益、公告风险提示等，以维护平台安全和用户权益。</strong></p>
+          <br>
+          <p><strong>9.5 如商家未按照本协议第五条中 5.8的规定履行设置权益时，平台方有权立即暂停向商家提供本协议项下全部或部分服务直至完整履行权益，无需退还任何服务费并有权扣押商家已经交纳的保证金；若商家逾期十五（15）个日历日仍未完整履行权益，平台方有权终止向商家提供本协议项下全部或部分服务，无需退还任何服务费并有权没收商家已经交纳的保证金。同时，平台方有权下架权益、公告风险提示等，以维护平台安全和用户权益。</strong></p>
+          <br>
+          <p><strong>9.6 若因商家违反本协议或其行为地法律，导致平台方遭受来自任何第三方的索赔或调查、损失、罚款或声誉损害，商家应对平台方进行全额赔偿并承担全部责任。</strong></p>
+          <br>
+          <p><strong>9.7 平台方对以下事项不承担任何责任：</strong></p>
+          <ul>
+            <li><strong>商家与平台用户之间与商家设置权益有关的任何纠纷；以及</strong></li>
+            <li><strong>因香港法律或香港监管政策变化而导致的平台业务及功能调整。</strong></li>
+          </ul>
+          <br>
+          <p><strong>9.8 本第九条违约责任中的所有条款可以合并适用，不具备排他性。</strong></p>
+          <br>
+          <p><strong>第十条 服务变更和协议终止</strong></p>
+          <br>
+          <p>10.1 本协议可由双方友好协商并书面同意终止。</p>
+          <br>
+          <p><strong>10.2 双方确认并理解，根据于签署日生效之香港相关法律法规，本协议符合所有适用法律。但是，鉴于与区块链和数字资产相关的监管和法律框架正在迅速发展，并且会受到频繁变化和不确定性的影响，如果任何政府、司法或执法机构的任何通知、询问、指导、政策、法律、法规、执法行动或其潜在变化（无论是否具有法律约束力或最终性）经平台方合理考虑可能会影响本协议项下服务的合法性、可行性或合规性，平台方有权自行决定（1）暂停服务、（2）解除本协议或（3）变更本协议项下的服务内容和形式，且不承担任何责任。商家已支付的且平台方已履行相应服务的费用不予退还。</strong></p>
+          <br>
+          <p><strong>第十一条 通信</strong></p>
+          <br>
+          <p><strong>为便于您获知与本协议和平台服务相关的信息，您同意平台方有权通过网页公示、页面提示、弹窗、消息通知、公众号通知、站内信、您预留的联系方式（如手机短信、电子邮件等）等一种或多种方式进行通知，该通知自平台方发送/展示之时视为已成功送达您。如多种通知方式并存的，则送达时间以上述方式中最早发送之时为准。此类通知的内容或将对您产生重大有利或不利影响，请您务必确保联系方式为有效并请及时关注相应通知。</strong></p>
+          <br>
+          <p><strong>第十二条 适用法律与争议解决机制</strong></p>
+          <br>
+          <p>12.1 本协议的订立、效力、解释、履行及争议解决，均适用香港特别行政区法律（不包括冲突法）。</p>
+          <br>
+          <p>12.2 因本协议产生的任何争议，双方应友好协商解决；协商不成的，任一方可将争议提交至香港特别行政区有管辖权的法院以诉讼方式解决。</p>
+          <br>
+          <p><strong>第十三条 其他</strong></p>
+          <br>
+          <p>13.1 平台方在本协议项下仅作为独立承包人提供服务，本协议不构成双方之间的合伙、合资、信义、代理或信托关系。平台方不对商家负有信义义务，亦不提供投资、法律、税务、会计或财务建议，且不对服务的盈利、成果或监管批准作出保证。</p>
+          <br>
+          <p>13.2 如本协议任何条款中的任何内容被有管辖权的法院认定为无效或不可执行，该等内容应在适用法律允许的最大范围内予以限缩解释或部分删除，以使其在最大程度上得以有效执行；但不影响本协议其余内容的效力及可执行性。本协议其余内容仍应保持完全有效并继续履行。</p>
+          <br>
+          <p>13.3 本协议及补充协议（若有）构成双方就协议标的事项达成的完整协议，并取代此前与该事项相关的所有书面或口头的谈判、谅解和合意。</p>
+          <br>
+          <p style="text-align: right;"><strong>稳点商城</strong></p>
+          <br>
+          <p style="color: #999; text-align: center; padding: 30px 0;">
+            — 协议内容结束 —
+          </p>
+        </div>
+        <p class="scroll-hint" id="scrollHint">↓ 请向下滚动阅读完整协议 ↓</p>
+
+        <div class="agreement-box">
+          <input type="checkbox" id="agreeCheckbox">
+          <label for="agreeCheckbox">我已阅读并同意以上服务条款</label>
+        </div>
+
+        <button class="submit-btn" id="submitBtn" disabled>下一步：扫码付款</button>
+      </div>
+    </div>
+
+    <!-- Step 2: QR Code Payment -->
+    <div class="step-2" id="step2">
+      <div class="qr-box">
+        <h2 class="qr-title">扫码付款</h2>
+        <div class="qr-image">
+          <!-- 静态二维码图片，可替换为实际二维码 -->
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=RWA-Payment" alt="付款二维码">
+        </div>
+        <div class="amount-display">¥ <span id="amountDisplay">0.00</span></div>
+        <p class="payment-hint">请使用微信/支付宝扫码完成付款</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <img src="images/logo-white.png" alt="RWA.LTD" class="footer-logo">
+        <div class="footer-social">
+          <img src="images/footer/1.png" alt="Social 1">
+          <img src="images/footer/2.png" alt="Social 2">
+          <img src="images/footer/3.png" alt="Social 3">
+          <img src="images/footer/4.png" alt="Social 4">
+        </div>
+      </div>
+      <div class="footer-links">
+        <div class="footer-column">
+          <h4>關於我們</h4>
+          <p>關於</p>
+          <p>聯繫方式</p>
+          <p>公司地址</p>
+          <p>常見問題</p>
+        </div>
+        <div class="footer-column">
+          <h4>法律規定</h4>
+          <p>服務條款</p>
+          <p>隱私政策</p>
+        </div>
+        <div class="footer-column">
+          <h4>生態系統</h4>
+          <p>Genius Coffee</p>
+          <p>RWA APP 下載</p>
+        </div>
+      </div>
+    </div>
+    <p class="footer-copyright">Copyright © 2026 RWA.LTD. All rights reserved</p>
+  </footer>
+
+  <script>
+    // 状态变量
+    let scrolledToBottom = false;
+    let agreed = false;
+
+    // DOM 元素
+    const contractContent = document.getElementById('contractContent');
+    const scrollHint = document.getElementById('scrollHint');
+    const agreeCheckbox = document.getElementById('agreeCheckbox');
+    const agreeLabel = document.querySelector('.agreement-box label');
+    const submitBtn = document.getElementById('submitBtn');
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const amountDisplay = document.getElementById('amountDisplay');
+
+    // 获取 URL 参数中的金额
+    function getAmountFromURL() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const amount = urlParams.get('amount') || '0';
+      return parseFloat(amount).toFixed(2);
+    }
+
+    // 初始化金额显示
+    amountDisplay.textContent = getAmountFromURL();
+
+    // 初始化复选框为禁用状态
+    agreeCheckbox.disabled = true;
+
+    // 更新按钮状态
+    function updateButtonState() {
+      submitBtn.disabled = !(scrolledToBottom && agreed);
+    }
+
+    // 滚动检测
+    function checkScroll() {
+      const scrollTop = contractContent.scrollTop;
+      const scrollHeight = contractContent.scrollHeight;
+      const clientHeight = contractContent.clientHeight;
+
+      // 判断是否滚动到底部（允许 10px 误差）
+      if (scrollHeight - scrollTop - clientHeight <= 10) {
+        scrolledToBottom = true;
+        scrollHint.classList.add('hidden');
+        // 启用复选框
+        agreeCheckbox.disabled = false;
+        agreeCheckbox.classList.add('enabled');
+        agreeLabel.classList.add('enabled');
+      }
+    }
+
+    contractContent.addEventListener('scroll', checkScroll);
+
+    // 页面加载后检查一次（以防内容太短不需要滚动）
+    setTimeout(checkScroll, 100);
+
+    // 复选框监听
+    agreeCheckbox.addEventListener('change', function() {
+      agreed = this.checked;
+      updateButtonState();
+    });
+
+    // 点击按钮切换步骤
+    submitBtn.addEventListener('click', function() {
+      if (!this.disabled) {
+        step1.style.display = 'none';
+        step2.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
