@@ -718,7 +718,7 @@
           <div class="cost-total">
             首次应付：<strong id="totalAmount">¥1,500</strong>
           </div>
-          <div style="font-size: 12px; color: #999; margin-top: 4px;">（首月服务费 ¥1,000 + 保证金 ¥500）</div>
+          <div style="font-size: 12px; color: #999; margin-top: 4px;" id="costBreakdown">（首月服务费 ¥1,000 + 保证金 ¥500）</div>
         </div>
 
         <button class="next-btn" id="nextBtn" disabled>下一步：阅读协议</button>
@@ -1101,10 +1101,15 @@
     });
 
     // 更新费用显示
+    const costBreakdownEl = document.getElementById('costBreakdown');
+
     function updateTotalAmount() {
       let total = 1500; // 默认试用套餐：1000 + 500
       if (selectedPlan === 'standard') {
         total = 6500; // 标准套餐：6000 + 500
+        costBreakdownEl.textContent = '（半年服务费 ¥6,000 + 保证金 ¥500）';
+      } else {
+        costBreakdownEl.textContent = '（首月服务费 ¥1,000 + 保证金 ¥500）';
       }
       totalAmountEl.textContent = '¥' + total.toLocaleString();
     }
